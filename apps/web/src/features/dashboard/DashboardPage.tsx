@@ -1,10 +1,11 @@
-import { Divider, SimpleGrid, Stack, Text, Title } from '@mantine/core'
+import { SimpleGrid, Stack, Text, Title } from '@mantine/core'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { money } from '../../lib/format.ts'
 import { DashboardBarChart } from './components/DashboardBarChart.tsx'
 import { DashboardCard } from './components/DashboardCard.tsx'
 import { getDashboard, type DashboardMes, type DashboardStatus } from './dashboard.ts'
+import './DashboardPage.css'
 
 function byName(cobrancas: DashboardStatus[], nome: string) {
   return cobrancas.find((item) => item.nome.localeCompare(nome, 'pt-BR', { sensitivity: 'accent' }) === 0)
@@ -98,17 +99,17 @@ export function DashboardPage() {
         />
       </SimpleGrid>
 
-      <Divider component="hr" color="dark.4" />
+      <hr className="dashboard-rule" />
       <div>
         <Text fw={600}>Valores recebidos</Text>
         <DashboardBarChart items={recebidos} color="green" emptyLabel="Nenhum valor recebido." />
       </div>
-      <Divider component="hr" color="dark.4" />
+      <hr className="dashboard-rule" />
       <div>
         <Text fw={600}>Valores em atraso</Text>
         <DashboardBarChart items={atrasos} color="red" emptyLabel="Nenhum valor em atraso." />
       </div>
-      <Divider component="hr" color="dark.4" />
+      <hr className="dashboard-rule" />
     </Stack>
   )
 }

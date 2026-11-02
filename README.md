@@ -39,6 +39,14 @@ O projeto `apps/backend/AEIG.Api.Worker` varre as cobranças com status **Penden
 dotnet run --project apps/backend/AEIG.Api.Worker
 ```
 
+## Dashboard
+
+A rota `/` abre o dashboard. Ele mostra a quantidade de associados, o valor em aberto, o valor recebido e os valores em atraso. Uma linha separa esses cartões dos gráficos: valores recebidos por mês e, depois de outra linha, valores em atraso por mês. O logo e o item **Dashboard** do menu levam a essa tela.
+
+![Dashboard](<imgs/006 - Dash 001.png>)
+
+![Valores em atraso](<imgs/007 - Dash 002.png>)
+
 ## Parametrização
 
 A multa única e os juros simples por dia de atraso ficam gravados no banco (padrão: 2% de multa e 0,033% ao dia, os dois sobre o valor original). No menu **Parametrização** da aplicação web esses percentuais podem ser alterados. A baixa manual e o cálculo do pagamento usam os valores salvos.
@@ -64,3 +72,11 @@ Baixa manual, com data de pagamento e juros:
 Parametrização da multa e dos juros diários, que podem ser alterados:
 
 ![Parametrização](<imgs/005 - parametrização de juros.png>)
+
+Dashboard, com os cartões e o gráfico de valores recebidos:
+
+![Dashboard](<imgs/006 - Dash 001.png>)
+
+Gráfico de valores em atraso:
+
+![Valores em atraso](<imgs/007 - Dash 002.png>)
