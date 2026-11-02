@@ -3,6 +3,7 @@ import { HubConnectionBuilder } from '@microsoft/signalr'
 import { useEffect } from 'react'
 import { formatDate, money } from '../../lib/format.ts'
 import { apiOrigin } from '../../lib/http.ts'
+import { unauthorizedMiddleware } from '../../lib/unauthorized.ts'
 
 interface CobrancaBaixada {
   nossoNumero: string
@@ -29,7 +30,10 @@ export function CobrancaNotifications() {
       })
     })
 
-    connection.start().catch(() => {})
+    connection.start().catch((error: unknown) => {
+      const statusCode = typeof error === 'object' && error && 'statusCode' in error ? error.statusCode : undefined
+      if (statusCode === 401) unauthorizedMiddleware('/hubs/cobranca', 401)
+    })
     return () => {
       connection.stop().catch(() => {})
     }

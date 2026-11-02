@@ -3,12 +3,21 @@ import { LoginPage } from './features/auth/LoginPage.tsx'
 import { clearSession, readToken, readUser, saveSession, type SessionUser } from './features/auth/session.ts'
 import { AppLayout } from './features/layout/AppLayout.tsx'
 import { http } from './lib/http.ts'
+import { setUnauthorizedHandler } from './lib/unauthorized.ts'
 import { AppRoutes } from './AppRoutes.tsx'
 import { CobrancaNotifications } from './features/cobrancas/CobrancaNotifications.tsx'
 
 export default function App() {
   const [token, setToken] = useState(readToken)
   const [user, setUser] = useState<SessionUser | null>(readUser)
+
+  useEffect(() => {
+    setUnauthorizedHandler(() => {
+      setUser(null)
+      setToken(null)
+    })
+    return () => setUnauthorizedHandler(null)
+  }, [])
 
   useEffect(() => {
     if (!token || user?.name) return

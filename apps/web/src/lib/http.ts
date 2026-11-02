@@ -1,3 +1,5 @@
+import { unauthorizedMiddleware } from './unauthorized.ts'
+
 export class ApiError extends Error {
   status: number
 
@@ -41,6 +43,8 @@ export async function http<T>(
   })
 
   if (response.status === 204) return undefined as T
+
+  unauthorizedMiddleware(path, response.status)
 
   if (!response.ok) {
     let message = response.statusText || 'Falha na requisição'
