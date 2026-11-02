@@ -4,14 +4,14 @@ import type { BaseEntity } from '../../types/crud.ts'
 import { asc } from '../../lib/query.ts'
 
 export interface User extends BaseEntity {
-  name: string
+  nome: string
   email: string
 }
 
 export interface UserRequest {
-  name: string
+  nome: string
   email: string
-  password: string
+  senha: string
 }
 
 export const userApi = createCrudApi<User, UserRequest>('User')
@@ -19,6 +19,6 @@ export const userApi = createCrudApi<User, UserRequest>('User')
 export function useUsers() {
   return useCrud(userApi, {
     pageSize: 20,
-    orderBy: [asc<User>('name')],
+    orderBy: [asc<User>('nome')],
   })
 }

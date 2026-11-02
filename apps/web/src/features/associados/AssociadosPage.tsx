@@ -61,12 +61,15 @@ export function AssociadosPage() {
       <Stack component="ul" gap="sm" p={0} style={{ listStyle: 'none' }}>
         {items.map((associado) => (
           <Paper key={associado.navigationId} component="li" p="md" radius="md" bg="dark.6" withBorder>
-            <Text fw={600}>{associado.name}</Text>
+            <Text fw={600}>{associado.nome}</Text>
             <Text size="sm" c="dimmed">
               CPF {formatCpf(associado.cpf)}
             </Text>
             <Text size="sm" c="orange">
-              Mensalidade {money.format(associado.monthlyFee)}
+              Mensalidade {money.format(associado.valorMensalidade)}
+            </Text>
+            <Text size="sm" c="dimmed">
+              Vencimento dia {associado.diaVencimento}
             </Text>
           </Paper>
         ))}
@@ -106,6 +109,7 @@ function AssociadoFilters({
   const [name, setName] = useState('')
   const [cpf, setCpf] = useState('')
   const [monthlyFee, setMonthlyFee] = useState<number | string>('')
+  const [dueDay, setDueDay] = useState<number | string>('')
 
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -113,10 +117,12 @@ function AssociadoFilters({
     const trimmedName = name.trim()
     const digits = cpf.replace(/\D/g, '')
     const fee = typeof monthlyFee === 'number' ? monthlyFee : Number(String(monthlyFee).replace(',', '.'))
+    const day = typeof dueDay === 'number' ? dueDay : Number(dueDay)
 
-    if (trimmedName) filters.push(contains<Associado>('name', trimmedName))
+    if (trimmedName) filters.push(contains<Associado>('nome', trimmedName))
     if (digits) filters.push(contains<Associado>('cpf', digits))
-    if (monthlyFee !== '' && Number.isFinite(fee)) filters.push(eq<Associado>('monthlyFee', fee))
+    if (monthlyFee !== '' && Number.isFinite(fee)) filters.push(eq<Associado>('valorMensalidade', fee))
+    if (dueDay !== '' && Number.isInteger(day)) filters.push(eq<Associado>('diaVencimento', day))
     onApply(filters)
   }
 
@@ -124,6 +130,7 @@ function AssociadoFilters({
     setName('')
     setCpf('')
     setMonthlyFee('')
+    setDueDay('')
     onClear()
   }
 
@@ -142,6 +149,14 @@ function AssociadoFilters({
               prefix="R$ "
               decimalSeparator=","
               thousandSeparator="."
+            />
+            <NumberInput
+              label="Dia de vencimento"
+              value={dueDay}
+              onChange={setDueDay}
+              min={1}
+              max={30}
+              allowDecimal={false}
             />
             <Group justify="flex-end">
               <Button type="button" variant="default" onClick={clear}>

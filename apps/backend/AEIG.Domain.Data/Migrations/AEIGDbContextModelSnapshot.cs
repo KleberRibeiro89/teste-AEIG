@@ -37,16 +37,111 @@ namespace AEIG.Domain.Data.Migrations
                     b.Property<Guid>("CreatedBy")
                         .HasColumnType("TEXT");
 
-                    b.Property<decimal>("MonthlyFee")
-                        .HasPrecision(10, 2)
+                    b.Property<int>("DiaVencimento")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<Guid>("NavigationId")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("Nome")
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("TEXT");
 
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("ValorMensalidade")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NavigationId")
+                        .IsUnique();
+
+                    b.ToTable("Associado");
+                });
+
+            modelBuilder.Entity("AEIG.Domain.Entities.Cobranca", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("IdAssociado")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("IdStatus")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("MesReferencia")
+                        .IsRequired()
+                        .HasMaxLength(7)
+                        .HasColumnType("TEXT");
+
                     b.Property<Guid>("NavigationId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("NossoNumero")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdAssociado");
+
+                    b.HasIndex("IdStatus");
+
+                    b.HasIndex("NavigationId")
+                        .IsUnique();
+
+                    b.HasIndex("NossoNumero")
+                        .IsUnique();
+
+                    b.ToTable("Cobranca");
+                });
+
+            modelBuilder.Entity("AEIG.Domain.Entities.Status", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("NavigationId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime?>("UpdatedAt")
@@ -60,7 +155,10 @@ namespace AEIG.Domain.Data.Migrations
                     b.HasIndex("NavigationId")
                         .IsUnique();
 
-                    b.ToTable("Associado");
+                    b.HasIndex("Nome")
+                        .IsUnique();
+
+                    b.ToTable("Status");
                 });
 
             modelBuilder.Entity("AEIG.Domain.Entities.User", b =>
@@ -82,14 +180,14 @@ namespace AEIG.Domain.Data.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("HashSenha")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<Guid>("NavigationId")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("PasswordHash")
+                    b.Property<string>("Nome")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -105,6 +203,25 @@ namespace AEIG.Domain.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("User");
+                });
+
+            modelBuilder.Entity("AEIG.Domain.Entities.Cobranca", b =>
+                {
+                    b.HasOne("AEIG.Domain.Entities.Associado", "Associado")
+                        .WithMany()
+                        .HasForeignKey("IdAssociado")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("AEIG.Domain.Entities.Status", "Status")
+                        .WithMany()
+                        .HasForeignKey("IdStatus")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Associado");
+
+                    b.Navigation("Status");
                 });
 #pragma warning restore 612, 618
         }

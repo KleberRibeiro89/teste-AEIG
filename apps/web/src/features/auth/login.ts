@@ -5,7 +5,7 @@ export interface LoginResult {
   expiresAt: string
   user: {
     navigationId: string
-    name: string
+    nome: string
     email: string
   }
 }
@@ -14,7 +14,7 @@ export async function login(email: string, password: string): Promise<LoginResul
   try {
     return await http<LoginResult>('/api/Auth/login', {
       method: 'POST',
-      body: { email, password },
+      body: { email, senha: password },
     })
   } catch (error) {
     if (error instanceof ApiError && error.status === 401) {

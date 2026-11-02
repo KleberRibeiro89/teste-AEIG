@@ -8,6 +8,7 @@ export function NovoAssociadoPage() {
   const [name, setName] = useState('')
   const [cpf, setCpf] = useState('')
   const [monthlyFee, setMonthlyFee] = useState<number | string>('')
+  const [dueDay, setDueDay] = useState<number | string>('')
   const [error, setError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
 
@@ -16,6 +17,7 @@ export function NovoAssociadoPage() {
     const trimmedName = name.trim()
     const digits = cpf.replace(/\D/g, '')
     const fee = typeof monthlyFee === 'number' ? monthlyFee : Number(String(monthlyFee).replace(',', '.'))
+    const day = typeof dueDay === 'number' ? dueDay : Number(dueDay)
 
     if (!trimmedName) {
       setError('Informe o nome.')
@@ -29,11 +31,15 @@ export function NovoAssociadoPage() {
       setError('Informe o valor da mensalidade.')
       return
     }
+    if (!Number.isInteger(day) || day < 1 || day > 30) {
+      setError('O dia de vencimento deve ser de 1 a 30.')
+      return
+    }
 
     setSaving(true)
     setError(null)
     try {
-      await associadoApi.create({ name: trimmedName, cpf: digits, monthlyFee: fee })
+      await associadoApi.create({ nome: trimmedName, cpf: digits, valorMensalidade: fee, diaVencimento: day })
       navigate('/associados')
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : 'Não foi possível salvar.')
@@ -69,6 +75,16 @@ export function NovoAssociadoPage() {
             prefix="R$ "
             decimalSeparator=","
             thousandSeparator="."
+            required
+          />
+          <NumberInput
+            label="Dia de vencimento"
+            value={dueDay}
+            onChange={setDueDay}
+            min={1}
+            max={30}
+            allowDecimal={false}
+            clampBehavior="strict"
             required
           />
           <Group justify="flex-end">

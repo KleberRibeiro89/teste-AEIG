@@ -47,7 +47,7 @@ public class UserService : ServiceBase<User, UserRequest, UserResponse>, IUserSe
     public async Task<LoginResponse?> LoginAsync(LoginRequest request)
     {
         var user = await _userRepository.GetByEmailAsync(request.Email);
-        if (user is null || !PasswordHasher.Verify(request.Password, user.PasswordHash))
+        if (user is null || !PasswordHasher.Verify(request.Senha, user.HashSenha))
             return null;
 
         var (token, expiresAt) = _tokenGenerator.GenerateToken(user);

@@ -4,15 +4,17 @@ import { asc } from '../../lib/query.ts'
 import type { BaseEntity } from '../../types/crud.ts'
 
 export interface Associado extends BaseEntity {
-  name: string
+  nome: string
   cpf: string
-  monthlyFee: number
+  valorMensalidade: number
+  diaVencimento: number
 }
 
 export interface AssociadoRequest {
-  name: string
+  nome: string
   cpf: string
-  monthlyFee: number
+  valorMensalidade: number
+  diaVencimento: number
 }
 
 export const associadoApi = createCrudApi<Associado, AssociadoRequest>('Associado')
@@ -20,6 +22,6 @@ export const associadoApi = createCrudApi<Associado, AssociadoRequest>('Associad
 export function useAssociados() {
   return useCrud(associadoApi, {
     pageSize: 20,
-    orderBy: [asc<Associado>('name')],
+    orderBy: [asc<Associado>('nome')],
   })
 }

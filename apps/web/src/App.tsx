@@ -30,7 +30,7 @@ export default function App() {
     return (
       <LoginPage
         onSuccess={(result) => {
-          const next = { name: result.user.name, email: result.user.email }
+          const next = { name: result.user.nome, email: result.user.email }
           saveSession(result.token, next)
           setUser(next)
           setToken(result.token)

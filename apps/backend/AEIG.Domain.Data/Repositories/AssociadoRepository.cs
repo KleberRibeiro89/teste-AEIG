@@ -12,4 +12,10 @@ public class AssociadoRepository : RepositoryBase<Associado>, IAssociadoReposito
 
     public Task<Associado?> GetByCpfAsync(string cpf) =>
         DbSet.FirstOrDefaultAsync(a => a.Cpf == cpf && a.Active);
+
+    public Task<Associado?> GetActiveByIdAsync(int id) =>
+        DbSet.FirstOrDefaultAsync(a => a.Id == id && a.Active);
+
+    public Task<bool> ExistsActiveAsync(int id) =>
+        DbSet.AnyAsync(a => a.Id == id && a.Active);
 }

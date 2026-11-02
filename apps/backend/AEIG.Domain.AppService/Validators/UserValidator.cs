@@ -7,8 +7,8 @@ public class UserValidator : AbstractValidator<User>
 {
     public UserValidator()
     {
-        RuleFor(u => u.Name).NotEmpty().MaximumLength(200);
+        RuleFor(u => u.Nome).NotEmpty().MaximumLength(200);
         RuleFor(u => u.Email).NotEmpty().EmailAddress().MaximumLength(320);
-        RuleFor(u => u.PasswordHash).NotEmpty();
+        RuleFor(u => u.HashSenha).NotEmpty();
     }
 }

@@ -14,6 +14,7 @@ public static class DbSeeder
 
         await context.Database.MigrateAsync();
         await SeedUsersAsync(context);
+        await SeedStatusesAsync(context);
     }
 
     public static async Task SeedUsersAsync(AEIGDbContext context)
@@ -37,9 +38,9 @@ public static class DbSeeder
             .Select(user => new User
             {
                 NavigationId = Guid.NewGuid(),
-                Name = user.Name,
+                Nome = user.Name,
                 Email = user.Email,
-                PasswordHash = passwordHash,
+                HashSenha = passwordHash,
                 CreatedAt = now,
                 CreatedBy = Guid.Empty,
                 Active = true
@@ -50,6 +51,34 @@ public static class DbSeeder
             return;
 
         await context.Set<User>().AddRangeAsync(missing);
+        await context.SaveChangesAsync();
+    }
+
+    public static async Task SeedStatusesAsync(AEIGDbContext context)
+    {
+        var names = new[] { "Pendente", "Em Atraso", "Pago", "Pago com Juros" };
+        var existing = await context.Set<Status>()
+            .Where(status => names.Contains(status.Nome))
+            .Select(status => status.Nome)
+            .ToListAsync();
+
+        var now = DateTime.UtcNow;
+        var missing = names
+            .Where(name => !existing.Contains(name))
+            .Select(name => new Status
+            {
+                NavigationId = Guid.NewGuid(),
+                Nome = name,
+                CreatedAt = now,
+                CreatedBy = Guid.Empty,
+                Active = true
+            })
+            .ToList();
+
+        if (missing.Count == 0)
+            return;
+
+        await context.Set<Status>().AddRangeAsync(missing);
         await context.SaveChangesAsync();
     }
 }

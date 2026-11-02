@@ -2,7 +2,8 @@ namespace AEIG.Domain.Entities;
 
 public record Associado : BaseEntity
 {
-    public string Name { get; set; } = string.Empty;
+    public string Nome { get; set; } = string.Empty;
     public string Cpf { get; set; } = string.Empty;
-    public decimal MonthlyFee { get; set; }
+    public decimal ValorMensalidade { get; set; }
+    public int DiaVencimento { get; set; }
 }
