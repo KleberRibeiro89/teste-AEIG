@@ -9,6 +9,7 @@ obj/
 *.db
 *.db-shm
 *.db-wal
+!apps/backend/AEIG.Api/Database/aeig.db
 
 # Node
 node_modules/
