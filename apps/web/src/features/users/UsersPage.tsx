@@ -1,10 +1,10 @@
-import { Button, Collapse, Group, Paper, Select, Stack, Text, TextInput, Title } from '@mantine/core'
+import { Button, Group, Stack, Text, Title } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
-import { useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router'
-import { contains, eq } from '../../lib/query.ts'
-import type { PropertyFilter } from '../../types/crud.ts'
-import { useUsers, type User } from './userCrud.ts'
+import { ListPagination } from '../../components/ListPagination.tsx'
+import { useUsers } from './userCrud.ts'
+import { UserCard } from './components/UserCard.tsx'
+import { UserFilters } from './components/UserFilters.tsx'
 
 export function UsersPage() {
   const users = useUsers()
@@ -48,96 +48,11 @@ export function UsersPage() {
 
       <Stack component="ul" gap="sm" p={0} style={{ listStyle: 'none' }}>
         {items.map((user) => (
-          <Paper key={user.navigationId} component="li" p="md" radius="md" bg="dark.6" withBorder>
-            <Text fw={600}>{user.nome}</Text>
-            <Text size="sm" c="dimmed">
-              {user.email}
-            </Text>
-            <Text size="sm" c={user.active ? 'orange' : 'dimmed'}>
-              {user.active ? 'Ativo' : 'Inativo'}
-            </Text>
-          </Paper>
+          <UserCard key={user.navigationId} user={user} />
         ))}
       </Stack>
 
-      {totalPages > 1 && (
-        <Group gap="sm">
-          <Button variant="default" disabled={pageNumber <= 0} onClick={() => users.setPage(pageNumber - 1)}>
-            Anterior
-          </Button>
-          <Text size="sm">
-            {pageNumber + 1} de {totalPages}
-          </Text>
-          <Button
-            variant="default"
-            disabled={pageNumber + 1 >= totalPages}
-            onClick={() => users.setPage(pageNumber + 1)}
-          >
-            Próxima
-          </Button>
-        </Group>
-      )}
+      <ListPagination pageNumber={pageNumber} totalPages={totalPages} onPage={users.setPage} />
     </Stack>
-  )
-}
-
-function UserFilters({
-  opened,
-  onApply,
-  onClear,
-}: {
-  opened: boolean
-  onApply: (filters: PropertyFilter<User>[]) => void
-  onClear: () => void
-}) {
-  const [nome, setNome] = useState('')
-  const [email, setEmail] = useState('')
-  const [active, setActive] = useState<string | null>(null)
-
-  function submit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault()
-    const filters: PropertyFilter<User>[] = []
-    const trimmedNome = nome.trim()
-    const trimmedEmail = email.trim()
-
-    if (trimmedNome) filters.push(contains<User>('nome', trimmedNome))
-    if (trimmedEmail) filters.push(contains<User>('email', trimmedEmail))
-    if (active === 'true' || active === 'false') filters.push(eq<User>('active', active === 'true'))
-    onApply(filters)
-  }
-
-  function clear() {
-    setNome('')
-    setEmail('')
-    setActive(null)
-    onClear()
-  }
-
-  return (
-    <Collapse expanded={opened}>
-      <Paper component="form" onSubmit={submit} p="md" radius="md" bg="dark.6" withBorder>
-        <Stack gap="sm">
-          <TextInput label="Nome" value={nome} onChange={(event) => setNome(event.currentTarget.value)} />
-          <TextInput label="E-mail" value={email} onChange={(event) => setEmail(event.currentTarget.value)} />
-          <Select
-            label="Situação"
-            placeholder="Todas"
-            clearable
-            value={active}
-            onChange={setActive}
-            data={[
-              { value: 'true', label: 'Ativo' },
-              { value: 'false', label: 'Inativo' },
-            ]}
-          />
-          <Group justify="flex-end">
-            <Button type="button" variant="default" onClick={clear}>
-              Limpar
-            </Button>
-            <Button type="submit">Filtrar</Button>
-          </Group>
-        </Stack>
-      </Paper>
-    </Collapse>
   )
 }

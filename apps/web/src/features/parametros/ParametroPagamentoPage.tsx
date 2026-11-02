@@ -1,5 +1,6 @@
-import { Button, Group, NumberInput, Paper, Stack, Text, Title } from '@mantine/core'
+import { Stack, Text, Title } from '@mantine/core'
 import { useEffect, useState, type FormEvent } from 'react'
+import { ParametroPagamentoForm } from './components/ParametroPagamentoForm.tsx'
 import { getParametroPagamento, updateParametroPagamento } from './parametroPagamento.ts'
 
 function toNumber(value: number | string) {
@@ -71,55 +72,22 @@ export function ParametroPagamentoPage() {
       </Text>
       {loading && <Text c="dimmed">Carregando...</Text>}
       {!loading && (
-        <Paper component="form" onSubmit={submit} p="lg" radius="md" bg="dark.6" withBorder>
-          <Stack gap="md">
-            {error && (
-              <Text c="red" size="sm">
-                {error}
-              </Text>
-            )}
-            {saved && (
-              <Text c="orange" size="sm">
-                Parâmetros salvos.
-              </Text>
-            )}
-            <NumberInput
-              label="Multa"
-              description="Percentual aplicado uma vez após o vencimento"
-              value={multa}
-              onChange={(value) => {
-                setMulta(value)
-                setSaved(false)
-              }}
-              min={0}
-              decimalScale={6}
-              suffix=" %"
-              decimalSeparator=","
-              thousandSeparator="."
-              required
-            />
-            <NumberInput
-              label="Juros diários"
-              description="Percentual simples por dia corrido de atraso"
-              value={juros}
-              onChange={(value) => {
-                setJuros(value)
-                setSaved(false)
-              }}
-              min={0}
-              decimalScale={6}
-              suffix=" %"
-              decimalSeparator=","
-              thousandSeparator="."
-              required
-            />
-            <Group justify="flex-end">
-              <Button type="submit" loading={saving}>
-                Salvar
-              </Button>
-            </Group>
-          </Stack>
-        </Paper>
+        <ParametroPagamentoForm
+          multa={multa}
+          juros={juros}
+          error={error}
+          saved={saved}
+          saving={saving}
+          onMultaChange={(value) => {
+            setMulta(value)
+            setSaved(false)
+          }}
+          onJurosChange={(value) => {
+            setJuros(value)
+            setSaved(false)
+          }}
+          onSubmit={submit}
+        />
       )}
     </Stack>
   )
