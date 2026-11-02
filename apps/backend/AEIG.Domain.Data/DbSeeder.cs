@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace AEIG.Domain.Data;
 
-public static class DbSeeder
+public static partial class DbSeeder
 {
     public static async Task SeedAsync(IServiceProvider services)
     {
@@ -16,6 +16,7 @@ public static class DbSeeder
         await SeedUsersAsync(context);
         await SeedStatusesAsync(context);
         await SeedParametrosPagamentoAsync(context);
+        await SeedAssociadosAsync(context);
     }
 
     public static async Task SeedUsersAsync(AEIGDbContext context)

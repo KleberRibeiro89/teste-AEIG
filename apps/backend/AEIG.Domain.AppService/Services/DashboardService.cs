@@ -1,3 +1,4 @@
+using AEIG.Domain;
 using AEIG.Domain.AppService.Dtos.Responses.DashboardResponses;
 using AEIG.Domain.AppService.Interfaces;
 using AEIG.Domain.Repositories;
@@ -21,6 +22,8 @@ public class DashboardService : IDashboardService
     {
         var associados = await _associadoRepository.CountActiveAsync();
         var resumo = await _cobrancaRepository.GetResumoPorStatusAsync();
+        var recebidos = await _cobrancaRepository.GetRecebidosPorMesAsync();
+        var atrasos = await _cobrancaRepository.GetAtrasosPorMesAsync();
         var porNome = resumo.ToDictionary(item => item.NomeStatus, StringComparer.OrdinalIgnoreCase);
 
         var cobrancas = OrdemStatus.Select(nome =>
@@ -49,7 +52,15 @@ public class DashboardService : IDashboardService
         return new DashboardResponse
         {
             Associados = associados,
-            Cobrancas = cobrancas
+            Cobrancas = cobrancas,
+            Recebidos = MapMeses(recebidos),
+            Atrasos = MapMeses(atrasos)
         };
     }
+
+    private static List<DashboardMesResponse> MapMeses(List<CobrancaMesResumo> meses) =>
+        meses
+            .OrderBy(item => item.Mes)
+            .Select(item => new DashboardMesResponse { Mes = item.Mes, Valor = item.Valor })
+            .ToList();
 }

@@ -36,4 +36,24 @@ public class CobrancaRepository : RepositoryBase<Cobranca>, ICobrancaRepository
                 ValorPago = g.Sum(c => c.ValorPago)
             })
             .ToListAsync();
+
+    public Task<List<CobrancaMesResumo>> GetRecebidosPorMesAsync() =>
+        DbSet.Where(c => c.Active && (c.Status!.Nome == "Pago" || c.Status.Nome == "Pago com Juros"))
+            .GroupBy(c => c.MesReferencia)
+            .Select(g => new CobrancaMesResumo
+            {
+                Mes = g.Key,
+                Valor = g.Sum(c => c.ValorPago)
+            })
+            .ToListAsync();
+
+    public Task<List<CobrancaMesResumo>> GetAtrasosPorMesAsync() =>
+        DbSet.Where(c => c.Active && c.Status!.Nome == "Em Atraso")
+            .GroupBy(c => c.MesReferencia)
+            .Select(g => new CobrancaMesResumo
+            {
+                Mes = g.Key,
+                Valor = g.Sum(c => c.Valor)
+            })
+            .ToListAsync();
 }

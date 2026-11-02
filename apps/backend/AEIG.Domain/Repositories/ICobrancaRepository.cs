@@ -8,4 +8,6 @@ public interface ICobrancaRepository : IRepositoryBase<Cobranca>
     Task<bool> ExistsInMonthAsync(int associadoId, string referenceMonth, Guid navigationId);
     Task<bool> NossoNumeroExistsAsync(string nossoNumero, Guid navigationId);
     Task<List<CobrancaStatusResumo>> GetResumoPorStatusAsync();
+    Task<List<CobrancaMesResumo>> GetRecebidosPorMesAsync();
+    Task<List<CobrancaMesResumo>> GetAtrasosPorMesAsync();
 }

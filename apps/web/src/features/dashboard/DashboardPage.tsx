@@ -1,9 +1,10 @@
-import { SimpleGrid, Stack, Text, Title } from '@mantine/core'
+import { Divider, SimpleGrid, Stack, Text, Title } from '@mantine/core'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { money } from '../../lib/format.ts'
+import { DashboardBarChart } from './components/DashboardBarChart.tsx'
 import { DashboardCard } from './components/DashboardCard.tsx'
-import { getDashboard, type DashboardStatus } from './dashboard.ts'
+import { getDashboard, type DashboardMes, type DashboardStatus } from './dashboard.ts'
 
 function byName(cobrancas: DashboardStatus[], nome: string) {
   return cobrancas.find((item) => item.nome.localeCompare(nome, 'pt-BR', { sensitivity: 'accent' }) === 0)
@@ -17,6 +18,8 @@ export function DashboardPage() {
   const navigate = useNavigate()
   const [associados, setAssociados] = useState(0)
   const [cobrancas, setCobrancas] = useState<DashboardStatus[]>([])
+  const [recebidos, setRecebidos] = useState<DashboardMes[]>([])
+  const [atrasos, setAtrasos] = useState<DashboardMes[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -28,6 +31,8 @@ export function DashboardPage() {
       .then((dashboard) => {
         setAssociados(dashboard.associados)
         setCobrancas(dashboard.cobrancas)
+        setRecebidos(dashboard.recebidos ?? [])
+        setAtrasos(dashboard.atrasos ?? [])
         setLoading(false)
       })
       .catch((caught: unknown) => {
@@ -51,7 +56,7 @@ export function DashboardPage() {
     )
 
   return (
-    <Stack gap="md" p="xl" maw={720}>
+    <Stack gap="md" p="xl" maw={1100}>
       <div>
         <Title order={2}>Dashboard</Title>
         <Text c="dimmed" size="sm">
@@ -65,7 +70,7 @@ export function DashboardPage() {
         </Text>
       )}
 
-      <SimpleGrid cols={{ base: 2, sm: 4 }} spacing="xs">
+      <SimpleGrid cols={{ base: 2, sm: 4 }} spacing="md">
         <DashboardCard
           label="Associados"
           value={String(associados)}
@@ -92,6 +97,18 @@ export function DashboardPage() {
           color="red"
         />
       </SimpleGrid>
+
+      <Divider component="hr" color="dark.4" />
+      <div>
+        <Text fw={600}>Valores recebidos</Text>
+        <DashboardBarChart items={recebidos} color="green" emptyLabel="Nenhum valor recebido." />
+      </div>
+      <Divider component="hr" color="dark.4" />
+      <div>
+        <Text fw={600}>Valores em atraso</Text>
+        <DashboardBarChart items={atrasos} color="red" emptyLabel="Nenhum valor em atraso." />
+      </div>
+      <Divider component="hr" color="dark.4" />
     </Stack>
   )
 }

@@ -16,8 +16,8 @@ export function DashboardCard({ label, value, detail, color, onClick }: Dashboar
       component={onClick ? 'button' : 'div'}
       type={onClick ? 'button' : undefined}
       onClick={onClick}
-      p="xs"
-      radius="sm"
+      p="lg"
+      radius="md"
       withBorder
       style={{
         background: color === 'gray' ? undefined : `var(--mantine-color-${tone}-light)`,
@@ -25,16 +25,17 @@ export function DashboardCard({ label, value, detail, color, onClick }: Dashboar
         textAlign: 'left',
         cursor: onClick ? 'pointer' : undefined,
         width: '100%',
+        minHeight: 128,
       }}
       bg={color === 'gray' ? 'dark.6' : undefined}
     >
-      <Text size="xs" c="dimmed">
+      <Text size="md" c="dimmed">
         {label}
       </Text>
-      <Text fw={700} size="md" c={color === 'gray' ? undefined : color}>
+      <Text fw={700} fz={30} lh={1.2} c={color === 'gray' ? undefined : color}>
         {value}
       </Text>
-      <Text size="xs" c="dimmed">
+      <Text size="sm" c="dimmed">
         {detail}
       </Text>
     </Paper>
