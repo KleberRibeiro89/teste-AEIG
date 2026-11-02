@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace AEIG.Api.Controllers;
 
 [ApiController]
-[Authorize]
+[AllowAnonymous]
 [Route("api/[controller]")]
 public class AssociadoController : ControllerBase
 {

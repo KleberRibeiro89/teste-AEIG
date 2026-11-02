@@ -15,6 +15,7 @@ public static class DbSeeder
         await context.Database.MigrateAsync();
         await SeedUsersAsync(context);
         await SeedStatusesAsync(context);
+        await SeedParametrosPagamentoAsync(context);
     }
 
     public static async Task SeedUsersAsync(AEIGDbContext context)
@@ -79,6 +80,25 @@ public static class DbSeeder
             return;
 
         await context.Set<Status>().AddRangeAsync(missing);
+        await context.SaveChangesAsync();
+    }
+
+    public static async Task SeedParametrosPagamentoAsync(AEIGDbContext context)
+    {
+        var exists = await context.Set<ParametroPagamento>().AnyAsync(p => p.Active);
+        if (exists)
+            return;
+
+        var now = DateTime.UtcNow;
+        await context.Set<ParametroPagamento>().AddAsync(new ParametroPagamento
+        {
+            NavigationId = Guid.NewGuid(),
+            MultaPercentual = 2m,
+            JurosDiarioPercentual = 0.033m,
+            CreatedAt = now,
+            CreatedBy = Guid.Empty,
+            Active = true
+        });
         await context.SaveChangesAsync();
     }
 }

@@ -5,4 +5,7 @@ using AEIG.Domain.Entities;
 
 namespace AEIG.Domain.AppService.Interfaces;
 
-public interface ICobrancaService : IServiceBase<Cobranca, CobrancaRequest, CobrancaResponse>;
+public interface ICobrancaService : IServiceBase<Cobranca, CobrancaRequest, CobrancaResponse>
+{
+    Task<PagamentoResponse?> PagarAsync(Guid navigationId, PagamentoRequest request);
+}

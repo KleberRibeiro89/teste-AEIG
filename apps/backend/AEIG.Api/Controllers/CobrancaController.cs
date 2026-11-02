@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace AEIG.Api.Controllers;
 
 [ApiController]
-[Authorize]
+[AllowAnonymous]
 [Route("api/[controller]")]
 public class CobrancaController : ControllerBase
 {
@@ -38,6 +38,13 @@ public class CobrancaController : ControllerBase
     {
         var created = await _cobrancaService.CreateAsync(request);
         return CreatedAtAction(nameof(GetById), new { id = created.NavigationId }, created);
+    }
+
+    [HttpPost("{id:guid}/pagar")]
+    public async Task<ActionResult<PagamentoResponse>> Pagar(Guid id, [FromBody] PagamentoRequest? request)
+    {
+        var pagamento = await _cobrancaService.PagarAsync(id, request ?? new PagamentoRequest());
+        return pagamento is null ? NotFound() : Ok(pagamento);
     }
 
     [HttpPut("{id:guid}")]

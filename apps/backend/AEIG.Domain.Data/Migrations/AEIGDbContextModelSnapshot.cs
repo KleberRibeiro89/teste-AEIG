@@ -135,6 +135,46 @@ namespace AEIG.Domain.Data.Migrations
                     b.ToTable("Cobranca");
                 });
 
+            modelBuilder.Entity("AEIG.Domain.Entities.ParametroPagamento", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("JurosDiarioPercentual")
+                        .HasPrecision(10, 6)
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("MultaPercentual")
+                        .HasPrecision(10, 6)
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("NavigationId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NavigationId")
+                        .IsUnique();
+
+                    b.ToTable("ParametroPagamento");
+                });
+
             modelBuilder.Entity("AEIG.Domain.Entities.Status", b =>
                 {
                     b.Property<int>("Id")

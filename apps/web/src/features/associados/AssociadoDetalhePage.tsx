@@ -1,4 +1,4 @@
-import { Button, Group, Paper, Stack, Text, Title } from '@mantine/core'
+import { ActionIcon, Button, Group, Paper, Stack, Text, Title, Tooltip } from '@mantine/core'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router'
 import { asc, eq } from '../../lib/query.ts'
@@ -68,6 +68,14 @@ function statusColor(kind: 'warning' | 'error' | 'success') {
   if (kind === 'success') return 'green'
   if (kind === 'error') return 'red'
   return 'orange'
+}
+
+function BaixaIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="M20 6 9 17l-5-5" />
+    </svg>
+  )
 }
 
 function formatMonth(value: string) {
@@ -171,11 +179,25 @@ export function AssociadoDetalhePage() {
               borderColor: `var(--mantine-color-${color}-6)`,
             }}
           >
-            <Group justify="space-between" align="flex-start">
+            <Group justify="space-between" align="flex-start" wrap="nowrap">
               <Text fw={600}>{formatMonth(cobranca.mesReferencia)}</Text>
-              <Group gap={6} c={color} wrap="nowrap">
-                <StatusIcon kind={tone} />
-                <Text size="sm">{cobranca.nomeStatus ?? 'Pendente'}</Text>
+              <Group gap="xs" wrap="nowrap">
+                {tone !== 'success' && (
+                  <Tooltip label="Baixa manual">
+                    <ActionIcon
+                      variant="light"
+                      color={color}
+                      aria-label="Baixa manual"
+                      onClick={() => navigate(`/associados/${navigationId}/cobrancas/${cobranca.navigationId}/baixa`)}
+                    >
+                      <BaixaIcon />
+                    </ActionIcon>
+                  </Tooltip>
+                )}
+                <Group gap={6} c={color} wrap="nowrap">
+                  <StatusIcon kind={tone} />
+                  <Text size="sm">{cobranca.nomeStatus ?? 'Pendente'}</Text>
+                </Group>
               </Group>
             </Group>
             <Text size="sm" c="dimmed">

@@ -14,6 +14,7 @@ interface AppLayoutProps {
 const menu: { id: string; label: string; path: string; icon: () => ReactNode }[] = [
   { id: 'users', label: 'Usuários', path: '/usuarios', icon: UsersIcon },
   { id: 'associados', label: 'Associados', path: '/associados', icon: AssociadoIcon },
+  { id: 'parametros', label: 'Parametrização', path: '/parametros', icon: ParametroIcon },
 ]
 
 export function AppLayout({ children, userName, onLogout }: AppLayoutProps) {
@@ -127,6 +128,15 @@ function AssociadoIcon() {
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <circle cx="12" cy="8" r="3" stroke="currentColor" strokeWidth="1.8" />
       <path d="M5.5 19c.7-3.2 3-5 6.5-5s5.8 1.8 6.5 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+    </svg>
+  )
+}
+
+function ParametroIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M4 7h10M14 7a2 2 0 1 0 4 0 2 2 0 0 0-4 0M18 7h2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+      <path d="M4 17h2M6 17a2 2 0 1 0 4 0 2 2 0 0 0-4 0M10 17h10" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
     </svg>
   )
 }

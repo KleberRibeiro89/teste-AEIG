@@ -31,21 +31,31 @@ public class AssociadoService : ServiceBase<Associado, AssociadoRequest, Associa
     public override async Task<AssociadoResponse> CreateAsync(Associado entity, bool isActive = true)
     {
         var created = await base.CreateAsync(entity, isActive);
-        await GerarCobrancasDoAnoAsync(entity);
+        await GerarCobrancasAsync(entity);
         return created;
     }
 
-    private async Task GerarCobrancasDoAnoAsync(Associado associado)
+    private async Task GerarCobrancasAsync(Associado associado)
     {
-        var ano = DateTime.Now.Year;
-        for (var mes = 1; mes <= 12; mes++)
+        var inicio = PrimeiroMesReferencia(DateOnly.FromDateTime(DateTime.Today), associado.DiaVencimento);
+        for (var i = 0; i < 12; i++)
         {
+            var mes = inicio.AddMonths(i);
             await _cobrancaService.CreateAsync(new CobrancaRequest
             {
                 IdAssociado = associado.Id,
-                MesReferencia = $"{ano}-{mes:00}"
+                MesReferencia = $"{mes.Year}-{mes.Month:00}"
             });
         }
+    }
+
+    private static DateOnly PrimeiroMesReferencia(DateOnly hoje, int diaVencimento)
+    {
+        var dia = Math.Clamp(diaVencimento, 1, DateTime.DaysInMonth(hoje.Year, hoje.Month));
+        var inicio = new DateOnly(hoje.Year, hoje.Month, 1);
+        if (new DateOnly(hoje.Year, hoje.Month, dia) <= hoje)
+            inicio = inicio.AddMonths(1);
+        return inicio;
     }
 
     protected override async Task ValidateCreateAsync(Associado entity)

@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace AEIG.Api.Controllers;
 
 [ApiController]
+[AllowAnonymous]
 [Route("api/[controller]")]
 public class AuthController : ControllerBase
 {
@@ -26,7 +27,6 @@ public class AuthController : ControllerBase
         return result is null ? Unauthorized() : Ok(result);
     }
 
-    [Authorize]
     [HttpGet("me")]
     public IActionResult Me()
     {

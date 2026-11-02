@@ -30,3 +30,11 @@ dotnet run --project apps/backend/AEIG.Api
 ```
 
 A API sobe em `http://localhost:5271` e o Swagger em `http://localhost:5271/swagger`.
+
+## Worker
+
+O projeto `apps/backend/AEIG.Api.Worker` varre as cobranças com status **Pendente**. Se a data de vencimento já passou, o status muda para **Em Atraso**. Outra varredura confere as cobranças que já têm pagamento (`DataPagamento` ou valor pago) e muda o status para **Pago**, ou para **Pago com Juros** quando o pagamento foi depois do vencimento. As duas rodam ao subir o worker e depois a cada 60 minutos. Ele usa o mesmo banco da API.
+
+```powershell
+dotnet run --project apps/backend/AEIG.Api.Worker
+```

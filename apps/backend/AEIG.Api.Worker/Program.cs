@@ -9,6 +9,7 @@ var connectionString = ResolveSqlitePath(
     builder.Environment.ContentRootPath);
 builder.Services.AddDependencyInjectionConfiguration(connectionString);
 builder.Services.AddHostedService<CobrancaAtrasoWorker>();
+builder.Services.AddHostedService<CobrancaPagamentoWorker>();
 
 var host = builder.Build();
 host.Run();
