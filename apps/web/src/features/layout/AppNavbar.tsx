@@ -1,8 +1,9 @@
 import { Avatar, Group, NavLink, Text } from '@mantine/core'
 import { type ReactNode } from 'react'
-import { AssociadoIcon, ParametroIcon, UsersIcon } from '../../components/icons.tsx'
+import { AssociadoIcon, DashboardIcon, ParametroIcon, UsersIcon } from '../../components/icons.tsx'
 
 const menu: { id: string; label: string; path: string; icon: () => ReactNode }[] = [
+  { id: 'dashboard', label: 'Dashboard', path: '/', icon: DashboardIcon },
   { id: 'users', label: 'Usuários', path: '/usuarios', icon: UsersIcon },
   { id: 'associados', label: 'Associados', path: '/associados', icon: AssociadoIcon },
   { id: 'parametros', label: 'Parametrização', path: '/parametros', icon: ParametroIcon },
@@ -25,7 +26,7 @@ export function AppNavbar({ pathname, iconOnly, userName, onNavigate }: AppNavba
             key={item.id}
             component="button"
             type="button"
-            active={pathname === item.path || pathname.startsWith(`${item.path}/`)}
+            active={item.path === '/' ? pathname === '/' : pathname === item.path || pathname.startsWith(`${item.path}/`)}
             label={iconOnly ? undefined : item.label}
             aria-label={item.label}
             leftSection={<Icon />}

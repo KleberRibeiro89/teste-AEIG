@@ -18,4 +18,7 @@ public class AssociadoRepository : RepositoryBase<Associado>, IAssociadoReposito
 
     public Task<bool> ExistsActiveAsync(int id) =>
         DbSet.AnyAsync(a => a.Id == id && a.Active);
+
+    public Task<int> CountActiveAsync() =>
+        DbSet.CountAsync(a => a.Active);
 }

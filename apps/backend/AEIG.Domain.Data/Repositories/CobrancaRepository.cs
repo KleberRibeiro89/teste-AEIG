@@ -1,3 +1,4 @@
+using AEIG.Domain;
 using AEIG.Domain.Data.Extensions;
 using AEIG.Domain.Entities;
 using AEIG.Domain.Repositories;
@@ -23,4 +24,16 @@ public class CobrancaRepository : RepositoryBase<Cobranca>, ICobrancaRepository
 
     public Task<bool> NossoNumeroExistsAsync(string nossoNumero, Guid navigationId) =>
         DbSet.AnyAsync(c => c.NossoNumero == nossoNumero && c.NavigationId != navigationId);
+
+    public Task<List<CobrancaStatusResumo>> GetResumoPorStatusAsync() =>
+        DbSet.Where(c => c.Active)
+            .GroupBy(c => c.Status!.Nome)
+            .Select(g => new CobrancaStatusResumo
+            {
+                NomeStatus = g.Key,
+                Quantidade = g.Count(),
+                Valor = g.Sum(c => c.Valor),
+                ValorPago = g.Sum(c => c.ValorPago)
+            })
+            .ToListAsync();
 }

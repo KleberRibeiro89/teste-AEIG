@@ -27,6 +27,7 @@ public static class DependencyInjectionConfig
         services.AddScoped<ICobrancaService, CobrancaService>();
         services.AddScoped<IParametroPagamentoRepository, ParametroPagamentoRepository>();
         services.AddScoped<IParametroPagamentoService, ParametroPagamentoService>();
+        services.AddScoped<IDashboardService, DashboardService>();
 
         services.AddAutoMapper(cfg => { }, typeof(RequestMappingProfile).Assembly);
         services.AddValidatorsFromAssemblyContaining<UserValidator>();
