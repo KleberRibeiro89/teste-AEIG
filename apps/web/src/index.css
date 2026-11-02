@@ -1,0 +1,16 @@
+body {
+  margin: 0;
+  background: var(--mantine-color-dark-7);
+  color: var(--mantine-color-dark-0);
+}
+
+#root {
+  width: 100%;
+  min-height: 100svh;
+}
+
+h1,
+h2,
+p {
+  margin: 0;
+}

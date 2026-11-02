@@ -1,3 +1,4 @@
+using AEIG.Domain.AppService.Dtos.Responses.AssociadoResponses;
 using AEIG.Domain.AppService.Dtos.Responses.UserResponses;
 using AEIG.Domain.Entities;
 using AutoMapper;
@@ -10,5 +11,7 @@ public class ResponseMappingProfile : Profile
     {
         CreateMap<User, UserResponse>()
             .ForMember(dest => dest.NavigationId, opt => opt.MapFrom(src => src.NavigationId));
+
+        CreateMap<Associado, AssociadoResponse>();
     }
 }

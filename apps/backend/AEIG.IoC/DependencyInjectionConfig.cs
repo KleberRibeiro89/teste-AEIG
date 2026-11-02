@@ -20,6 +20,8 @@ public static class DependencyInjectionConfig
 
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IAssociadoRepository, AssociadoRepository>();
+        services.AddScoped<IAssociadoService, AssociadoService>();
 
         services.AddAutoMapper(cfg => { }, typeof(RequestMappingProfile).Assembly);
         services.AddValidatorsFromAssemblyContaining<UserValidator>();

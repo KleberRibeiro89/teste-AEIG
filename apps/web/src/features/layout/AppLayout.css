@@ -1,0 +1,52 @@
+.app-header,
+.app-navbar {
+  background: var(--mantine-color-dark-6);
+  border-color: var(--mantine-color-dark-4);
+}
+
+.app-navbar-toggle {
+  position: fixed;
+  z-index: 300;
+  top: calc(var(--app-shell-header-offset, 64px) + 22px);
+  border: 1px solid var(--mantine-color-dark-4);
+  transition: left 200ms ease;
+}
+
+.app-logo {
+  height: 40px;
+  width: auto;
+}
+
+.app-main {
+  background: var(--mantine-color-dark-7);
+  min-height: 100svh;
+}
+
+.app-navlink-icon {
+  justify-content: center;
+  padding-inline: 0;
+}
+
+.app-navbar-user {
+  margin-top: auto;
+}
+
+.app-navbar-rule {
+  margin: 12px 0;
+  border: 0;
+  border-top: 1px solid var(--mantine-color-dark-4);
+}
+
+.app-navbar .mantine-NavLink-root[data-active] {
+  background: var(--mantine-color-orange-6);
+  color: var(--mantine-color-black);
+}
+
+.app-navbar .mantine-NavLink-root:not([data-active]) {
+  color: var(--mantine-color-dark-0);
+}
+
+.app-navbar .mantine-NavLink-root:not([data-active]):hover {
+  color: var(--mantine-color-orange-4);
+  background: color-mix(in srgb, var(--mantine-color-orange-6) 16%, transparent);
+}

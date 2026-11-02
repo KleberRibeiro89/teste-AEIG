@@ -1,0 +1,84 @@
+.crud {
+  padding: 32px 24px 48px;
+  text-align: left;
+}
+
+.crud-header h1 {
+  font-size: 32px;
+  margin: 0 0 8px;
+}
+
+.crud-filters,
+.crud-pager {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin: 16px 0;
+}
+
+.crud-filters input,
+.crud-filters select,
+.crud-filters button,
+.crud-pager button {
+  font: inherit;
+  color: var(--mantine-color-dark-0);
+  background: var(--mantine-color-dark-5);
+  border: 1px solid var(--mantine-color-dark-4);
+  border-radius: 6px;
+  padding: 8px 10px;
+}
+
+.crud-button-primary {
+  background: var(--mantine-color-orange-6);
+  border-color: var(--mantine-color-orange-6);
+  color: var(--mantine-color-black);
+  font-weight: 700;
+}
+
+.crud-button-primary:hover {
+  background: var(--mantine-color-orange-5);
+}
+
+.crud-filters button:not(.crud-button-primary),
+.crud-pager button {
+  background: transparent;
+  color: var(--mantine-color-orange-4);
+}
+
+.crud-filters button,
+.crud-pager button,
+.crud th button {
+  cursor: pointer;
+}
+
+.crud-error {
+  color: #ff8a80;
+}
+
+.crud-table-wrap {
+  overflow-x: auto;
+  background: var(--mantine-color-dark-6);
+  border: 1px solid var(--mantine-color-dark-4);
+  border-radius: 8px;
+}
+
+.crud table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.crud th,
+.crud td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--mantine-color-dark-4);
+  text-align: left;
+}
+
+.crud th button {
+  font: inherit;
+  color: var(--mantine-color-orange-4);
+  background: none;
+  border: 0;
+  padding: 0;
+}
