@@ -4,6 +4,7 @@ import { clearSession, readToken, readUser, saveSession, type SessionUser } from
 import { AppLayout } from './features/layout/AppLayout.tsx'
 import { http } from './lib/http.ts'
 import { AppRoutes } from './AppRoutes.tsx'
+import { CobrancaNotifications } from './features/cobrancas/CobrancaNotifications.tsx'
 
 export default function App() {
   const [token, setToken] = useState(readToken)
@@ -45,6 +46,7 @@ export default function App() {
         setToken(null)
       }}
     >
+      <CobrancaNotifications />
       <AppRoutes />
     </AppLayout>
   )

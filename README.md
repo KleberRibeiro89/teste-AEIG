@@ -2,6 +2,8 @@
 
 API do teste prático da AEIG. O backend está em `apps/backend`.
 
+O enunciado pede TypeScript com Node.js. Eu também programo em Node. Pelo tempo previsto do teste, e para conseguir explicar o código na apresentação, preferi o C#, que é a linguagem em que tenho mais domínio.
+
 ## Tecnologias
 
 - **.NET 10** e **ASP.NET Core**, em C#, para a API HTTP.

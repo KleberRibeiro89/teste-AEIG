@@ -10,16 +10,16 @@ namespace AEIG.Api.Controllers;
 [Route("api/[controller]")]
 public class DashboardController : ControllerBase
 {
-    private readonly IDashboardService _service;
+    private readonly ICobrancaService _cobrancaService;
 
-    public DashboardController(IDashboardService service)
+    public DashboardController(ICobrancaService cobrancaService)
     {
-        _service = service;
+        _cobrancaService = cobrancaService;
     }
 
     [HttpGet]
     public async Task<ActionResult<DashboardResponse>> Get()
     {
-        return Ok(await _service.GetAsync());
+        return Ok(await _cobrancaService.ObterDashboardAsync());
     }
 }

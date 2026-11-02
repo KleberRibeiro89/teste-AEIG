@@ -1,5 +1,7 @@
 using System.Text;
+using AEIG.Api.Hubs;
 using AEIG.Api.Middlewares;
+using AEIG.Api.Notifications;
 using AEIG.Api.Security;
 using AEIG.Domain.AppService.Services.Interfaces;
 using AEIG.Domain.Data;
@@ -19,11 +21,13 @@ builder.Services.AddCors(options =>
         policy.SetIsOriginAllowed(origin =>
                 Uri.TryCreate(origin, UriKind.Absolute, out var uri) && uri.Host == "localhost")
             .AllowAnyHeader()
-            .AllowAnyMethod();
+            .AllowAnyMethod()
+            .AllowCredentials();
     });
 });
 
 builder.Services.AddControllers();
+builder.Services.AddSignalR();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 var connectionString = ResolveSqlitePath(
@@ -34,6 +38,7 @@ builder.Services.AddDependencyInjectionConfiguration(connectionString);
 builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ICurrentUser, CurrentUser>();
+builder.Services.AddScoped<ICobrancaNotificador, CobrancaNotificador>();
 
 var jwtSection = builder.Configuration.GetSection("Jwt");
 var jwtKey = jwtSection["Key"] ?? throw new InvalidOperationException("Jwt:Key is not configured.");
@@ -50,6 +55,16 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidIssuer = jwtSection["Issuer"],
             ValidAudience = jwtSection["Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
+        };
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                var accessToken = context.Request.Query["access_token"];
+                if (!string.IsNullOrEmpty(accessToken) && context.HttpContext.Request.Path.StartsWithSegments("/hubs/cobranca"))
+                    context.Token = accessToken;
+                return Task.CompletedTask;
+            }
         };
     });
 builder.Services.AddAuthorization();
@@ -70,6 +85,7 @@ app.UseMiddleware<ValidationExceptionMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+app.MapHub<CobrancaHub>("/hubs/cobranca");
 app.Run();
 
 static string ResolveSqlitePath(string connectionString, string contentRoot)

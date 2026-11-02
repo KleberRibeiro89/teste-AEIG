@@ -1,6 +1,8 @@
 using System.Text.RegularExpressions;
+using AEIG.Domain;
 using AEIG.Domain.AppService.Dtos.Requests.CobrancaRequests;
 using AEIG.Domain.AppService.Dtos.Responses.CobrancaResponses;
+using AEIG.Domain.AppService.Dtos.Responses.DashboardResponses;
 using AEIG.Domain.AppService.Extensions;
 using AEIG.Domain.AppService.Interfaces;
 using AEIG.Domain.AppService.Services.Interfaces;
@@ -18,25 +20,36 @@ public class CobrancaService : ServiceBase<Cobranca, CobrancaRequest, CobrancaRe
     public const string PaidStatusName = "Pago";
     public const string PaidWithInterestStatusName = "Pago com Juros";
 
+    private static readonly string[] OrdemStatus = ["Pendente", "Em Atraso", "Pago", "Pago com Juros"];
+
     private readonly ICobrancaRepository _cobrancaRepository;
     private readonly IAssociadoRepository _associadoRepository;
     private readonly IStatusRepository _statusRepository;
     private readonly IParametroPagamentoRepository _parametroPagamentoRepository;
+    private readonly IAvisoPagamentoRepository _avisoRepository;
+    private readonly ICobrancaNotificador _notificador;
+    private readonly IValidator<AvisoPagamentoRequest> _avisoValidator;
 
     public CobrancaService(
         ICobrancaRepository repository,
         IAssociadoRepository associadoRepository,
         IStatusRepository statusRepository,
         IParametroPagamentoRepository parametroPagamentoRepository,
+        IAvisoPagamentoRepository avisoRepository,
+        ICobrancaNotificador notificador,
         IMapper mapper,
         ICurrentUser currentUser,
-        IValidator<Cobranca> validator)
+        IValidator<Cobranca> validator,
+        IValidator<AvisoPagamentoRequest> avisoValidator)
         : base(repository, mapper, currentUser, validator)
     {
         _cobrancaRepository = repository;
         _associadoRepository = associadoRepository;
         _statusRepository = statusRepository;
         _parametroPagamentoRepository = parametroPagamentoRepository;
+        _avisoRepository = avisoRepository;
+        _notificador = notificador;
+        _avisoValidator = avisoValidator;
     }
 
     protected override async Task ValidateCreateAsync(Cobranca entity)
@@ -161,6 +174,14 @@ public class CobrancaService : ServiceBase<Cobranca, CobrancaRequest, CobrancaRe
         cobranca.ValorPago = valorPago;
         cobranca.IdStatus = status.Id;
         await UpdateAsync(cobranca);
+        await _notificador.NotificarBaixaAsync(new CobrancaBaixadaNotificacao
+        {
+            NavigationId = cobranca.NavigationId,
+            NossoNumero = cobranca.NossoNumero,
+            NomeStatus = status.Nome,
+            ValorPago = valorPago,
+            DataPagamento = dataPagamento
+        });
 
         return new PagamentoResponse
         {
@@ -174,6 +195,140 @@ public class CobrancaService : ServiceBase<Cobranca, CobrancaRequest, CobrancaRe
             NomeStatus = status.Nome
         };
     }
+
+    public async Task<DashboardResponse> ObterDashboardAsync()
+    {
+        var associados = await _associadoRepository.CountActiveAsync();
+        var resumo = await _cobrancaRepository.GetResumoPorStatusAsync();
+        var recebidos = await _cobrancaRepository.GetRecebidosPorMesAsync();
+        var atrasos = await _cobrancaRepository.GetAtrasosPorMesAsync();
+        var porNome = resumo.ToDictionary(item => item.NomeStatus, StringComparer.OrdinalIgnoreCase);
+
+        var cobrancas = OrdemStatus.Select(nome =>
+        {
+            porNome.TryGetValue(nome, out var item);
+            return new DashboardStatusResponse
+            {
+                Nome = nome,
+                Quantidade = item?.Quantidade ?? 0,
+                Valor = item?.Valor ?? 0,
+                ValorPago = item?.ValorPago ?? 0
+            };
+        }).ToList();
+
+        foreach (var extra in resumo.Where(item => !OrdemStatus.Contains(item.NomeStatus, StringComparer.OrdinalIgnoreCase)))
+        {
+            cobrancas.Add(new DashboardStatusResponse
+            {
+                Nome = extra.NomeStatus,
+                Quantidade = extra.Quantidade,
+                Valor = extra.Valor,
+                ValorPago = extra.ValorPago
+            });
+        }
+
+        return new DashboardResponse
+        {
+            Associados = associados,
+            Cobrancas = cobrancas,
+            Recebidos = MapMeses(recebidos),
+            Atrasos = MapMeses(atrasos)
+        };
+    }
+
+    public async Task<WebhookPagamentoResult> ReceberAvisoAsync(AvisoPagamentoRequest request)
+    {
+        request.IdEvento = request.IdEvento.Trim();
+        request.NossoNumero = request.NossoNumero.Trim();
+        await _avisoValidator.ValidateAndThrowAsync(request);
+
+        WebhookPagamentoResult? resultado = null;
+        try
+        {
+            await _avisoRepository.ExecuteInTransactionAsync(async () =>
+            {
+                resultado = await ProcessarAvisoAsync(request);
+            });
+        }
+        catch (AvisoDuplicadoException)
+        {
+            var existente = await _avisoRepository.GetByIdEventoAsync(request.IdEvento);
+            if (existente is null)
+                throw;
+
+            return AvisoEncontrado(MapAviso(existente, jaProcessado: true));
+        }
+
+        return resultado ?? new WebhookPagamentoResult();
+    }
+
+    private async Task<WebhookPagamentoResult> ProcessarAvisoAsync(AvisoPagamentoRequest request)
+    {
+        var existente = await _avisoRepository.GetByIdEventoAsync(request.IdEvento);
+        if (existente is not null)
+            return AvisoEncontrado(MapAviso(existente, jaProcessado: true));
+
+        var cobranca = await _cobrancaRepository.GetActiveByNossoNumeroAsync(request.NossoNumero);
+        if (cobranca is null)
+            return new WebhookPagamentoResult();
+
+        if (JaPaga(cobranca))
+        {
+            var aviso = new AvisoPagamento
+            {
+                IdEvento = request.IdEvento,
+                NossoNumero = cobranca.NossoNumero,
+                DataPagamento = cobranca.DataPagamento ?? request.DataPagamento,
+                NomeStatus = cobranca.Status?.Nome,
+                ValorPago = cobranca.ValorPago,
+                Mensagem = "Cobrança já está paga."
+            };
+            await _avisoRepository.RegistrarAsync(aviso);
+            return AvisoEncontrado(MapAviso(aviso, jaProcessado: false));
+        }
+
+        var pagamento = await PagarAsync(cobranca.NavigationId, new PagamentoRequest
+        {
+            DataPagamento = request.DataPagamento
+        });
+        if (pagamento is null)
+            return new WebhookPagamentoResult();
+
+        var registrado = new AvisoPagamento
+        {
+            IdEvento = request.IdEvento,
+            NossoNumero = cobranca.NossoNumero,
+            DataPagamento = pagamento.DataPagamento,
+            NomeStatus = pagamento.NomeStatus,
+            ValorPago = pagamento.ValorPago,
+            Mensagem = "Pagamento registrado."
+        };
+        await _avisoRepository.RegistrarAsync(registrado);
+        return AvisoEncontrado(MapAviso(registrado, jaProcessado: false));
+    }
+
+    private static List<DashboardMesResponse> MapMeses(List<CobrancaMesResumo> meses) =>
+        meses
+            .OrderBy(item => item.Mes)
+            .Select(item => new DashboardMesResponse { Mes = item.Mes, Valor = item.Valor })
+            .ToList();
+
+    private static bool JaPaga(Cobranca cobranca) =>
+        (cobranca.Status?.Nome ?? string.Empty).StartsWith("Pago", StringComparison.OrdinalIgnoreCase);
+
+    private static WebhookPagamentoResult AvisoEncontrado(AvisoPagamentoResponse resposta) =>
+        new() { CobrancaEncontrada = true, Resposta = resposta };
+
+    private static AvisoPagamentoResponse MapAviso(AvisoPagamento aviso, bool jaProcessado) => new()
+    {
+        IdEvento = aviso.IdEvento,
+        NossoNumero = aviso.NossoNumero,
+        DataPagamento = aviso.DataPagamento,
+        NomeStatus = aviso.NomeStatus,
+        ValorPago = aviso.ValorPago,
+        JaProcessado = jaProcessado,
+        Mensagem = aviso.Mensagem
+    };
 
     private async Task<Status> ObterStatusAsync(string nome)
     {

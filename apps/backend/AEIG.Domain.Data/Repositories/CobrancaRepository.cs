@@ -25,6 +25,9 @@ public class CobrancaRepository : RepositoryBase<Cobranca>, ICobrancaRepository
     public Task<bool> NossoNumeroExistsAsync(string nossoNumero, Guid navigationId) =>
         DbSet.AnyAsync(c => c.NossoNumero == nossoNumero && c.NavigationId != navigationId);
 
+    public Task<Cobranca?> GetActiveByNossoNumeroAsync(string nossoNumero) =>
+        DbSet.Include(c => c.Status).FirstOrDefaultAsync(c => c.Active && c.NossoNumero == nossoNumero);
+
     public Task<List<CobrancaStatusResumo>> GetResumoPorStatusAsync() =>
         DbSet.Where(c => c.Active)
             .GroupBy(c => c.Status!.Nome)

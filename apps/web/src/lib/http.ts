@@ -8,9 +8,12 @@ export class ApiError extends Error {
   }
 }
 
+export function apiOrigin() {
+  return (import.meta.env.VITE_API_URL ?? 'https://localhost:7115').replace(/\/$/, '')
+}
+
 function apiUrl(path: string): URL {
-  const base = (import.meta.env.VITE_API_URL ?? 'https://localhost:7115').replace(/\/$/, '')
-  return new URL(path.startsWith('/') ? path : `/${path}`, `${base}/`)
+  return new URL(path.startsWith('/') ? path : `/${path}`, `${apiOrigin()}/`)
 }
 
 export async function http<T>(

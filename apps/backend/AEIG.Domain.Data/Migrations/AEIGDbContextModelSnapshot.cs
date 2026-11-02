@@ -66,6 +66,67 @@ namespace AEIG.Domain.Data.Migrations
                     b.ToTable("Associado");
                 });
 
+            modelBuilder.Entity("AEIG.Domain.Entities.AvisoPagamento", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateOnly>("DataPagamento")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("IdEvento")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Mensagem")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("NavigationId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("NomeStatus")
+                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("NossoNumero")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("ValorPago")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdEvento")
+                        .IsUnique();
+
+                    b.HasIndex("NavigationId")
+                        .IsUnique();
+
+                    b.ToTable("AvisoPagamento");
+                });
+
             modelBuilder.Entity("AEIG.Domain.Entities.Cobranca", b =>
                 {
                     b.Property<int>("Id")

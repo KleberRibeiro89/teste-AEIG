@@ -1,6 +1,7 @@
 using AEIG.Domain.AppService.Interfaces;
 using AEIG.Domain.AppService.Mappings;
 using AEIG.Domain.AppService.Services;
+using AEIG.Domain.AppService.Services.Interfaces;
 using AEIG.Domain.AppService.Validators;
 using AEIG.Domain.Data;
 using AEIG.Domain.Data.Repositories;
@@ -25,9 +26,10 @@ public static class DependencyInjectionConfig
         services.AddScoped<IStatusRepository, StatusRepository>();
         services.AddScoped<ICobrancaRepository, CobrancaRepository>();
         services.AddScoped<ICobrancaService, CobrancaService>();
+        services.AddScoped<ICobrancaNotificador, NullCobrancaNotificador>();
+        services.AddScoped<IAvisoPagamentoRepository, AvisoPagamentoRepository>();
         services.AddScoped<IParametroPagamentoRepository, ParametroPagamentoRepository>();
         services.AddScoped<IParametroPagamentoService, ParametroPagamentoService>();
-        services.AddScoped<IDashboardService, DashboardService>();
 
         services.AddAutoMapper(cfg => { }, typeof(RequestMappingProfile).Assembly);
         services.AddValidatorsFromAssemblyContaining<UserValidator>();
