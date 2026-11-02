@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="AEIG.Api/AEIG.Api.csproj" />
+  <Project Path="AEIG.Domain.AppService/AEIG.Domain.AppService.csproj" />
+  <Project Path="AEIG.Domain.Data/AEIG.Domain.Data.csproj" />
+  <Project Path="AEIG.Domain/AEIG.Domain.csproj" />
+  <Project Path="AEIG.IoC/AEIG.IoC.csproj" />
+</Solution>
