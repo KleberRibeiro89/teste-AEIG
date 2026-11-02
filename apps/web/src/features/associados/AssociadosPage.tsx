@@ -58,10 +58,19 @@ export function AssociadosPage() {
         <Text c="dimmed">Nenhum associado cadastrado.</Text>
       )}
 
-      <Stack component="ul" gap="sm" p={0} style={{ listStyle: 'none' }}>
+      <Stack gap="sm">
         {items.map((associado) => (
-          <Paper key={associado.navigationId} component="li" p="md" radius="md" bg="dark.6" withBorder>
-            <Text fw={600}>{associado.nome}</Text>
+          <Paper key={associado.navigationId} p="md" radius="md" bg="dark.6" withBorder>
+            <Text
+              component="button"
+              type="button"
+              fw={600}
+              c="orange"
+              onClick={() => navigate(`/associados/${associado.navigationId}`)}
+              style={{ background: 'none', border: 0, padding: 0, cursor: 'pointer', textAlign: 'left' }}
+            >
+              {associado.nome}
+            </Text>
             <Text size="sm" c="dimmed">
               CPF {formatCpf(associado.cpf)}
             </Text>

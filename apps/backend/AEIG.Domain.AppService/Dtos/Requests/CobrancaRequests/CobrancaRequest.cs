@@ -7,5 +7,6 @@ public class CobrancaRequest
     public decimal? Valor { get; set; }
     public decimal? ValorPago { get; set; }
     public DateOnly? DataVencimento { get; set; }
+    public DateOnly? DataPagamento { get; set; }
     public int IdStatus { get; set; }
 }

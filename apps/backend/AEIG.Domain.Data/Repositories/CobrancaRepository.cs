@@ -1,3 +1,4 @@
+using AEIG.Domain.Data.Extensions;
 using AEIG.Domain.Entities;
 using AEIG.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +10,9 @@ public class CobrancaRepository : RepositoryBase<Cobranca>, ICobrancaRepository
     public CobrancaRepository(AEIGDbContext context) : base(context)
     {
     }
+
+    public override Task<AEIG.Domain.DynamicQueryResult<Cobranca>> GetPagedAsync(AEIG.Domain.DynamicQuery query) =>
+        DbSet.Where(c => c.Active).Include(c => c.Status).ToPagedAsync(query);
 
     public Task<bool> ExistsInMonthAsync(int associadoId, string referenceMonth, Guid navigationId) =>
         DbSet.AnyAsync(c =>

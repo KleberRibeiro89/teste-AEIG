@@ -4,6 +4,7 @@ import { asc } from '../../lib/query.ts'
 import type { BaseEntity } from '../../types/crud.ts'
 
 export interface Associado extends BaseEntity {
+  id: number
   nome: string
   cpf: string
   valorMensalidade: number

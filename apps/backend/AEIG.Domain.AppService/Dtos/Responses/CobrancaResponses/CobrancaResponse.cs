@@ -9,6 +9,7 @@ public class CobrancaResponse
     public decimal Valor { get; set; }
     public decimal ValorPago { get; set; }
     public DateOnly DataVencimento { get; set; }
+    public DateOnly? DataPagamento { get; set; }
     public int IdStatus { get; set; }
     public string? NomeStatus { get; set; }
     public DateTime CreatedAt { get; set; }

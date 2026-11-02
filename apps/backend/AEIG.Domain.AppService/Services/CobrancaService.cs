@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using AEIG.Domain.AppService.Dtos.Requests.CobrancaRequests;
 using AEIG.Domain.AppService.Dtos.Responses.CobrancaResponses;
 using AEIG.Domain.AppService.Interfaces;
@@ -51,6 +52,9 @@ public class CobrancaService : ServiceBase<Cobranca, CobrancaRequest, CobrancaRe
         if (generateNossoNumero && string.IsNullOrWhiteSpace(entity.NossoNumero))
             entity.NossoNumero = await GenerateNossoNumeroAsync(entity.NavigationId);
 
+        if (generateNossoNumero)
+            await PreencherValoresAsync(entity);
+
         if (entity.IdStatus == 0)
         {
             var pending = await _statusRepository.GetActiveByNameAsync(PendingStatusName);
@@ -58,6 +62,33 @@ public class CobrancaService : ServiceBase<Cobranca, CobrancaRequest, CobrancaRe
                 throw new ValidationException([new ValidationFailure(nameof(Cobranca.IdStatus), "Status Pendente não encontrado.")]);
             entity.IdStatus = pending.Id;
         }
+    }
+
+    private async Task PreencherValoresAsync(Cobranca entity)
+    {
+        if (entity.Valor > 0 && entity.DataVencimento != default)
+            return;
+
+        var associado = await _associadoRepository.GetActiveByIdAsync(entity.IdAssociado);
+        if (associado is null)
+            throw new ValidationException([new ValidationFailure(nameof(Cobranca.IdAssociado), "Associado não encontrado.")]);
+
+        if (entity.Valor <= 0)
+            entity.Valor = associado.ValorMensalidade;
+
+        if (entity.DataVencimento == default && MesReferenciaValido(entity.MesReferencia))
+            entity.DataVencimento = CalcularDataVencimento(entity.MesReferencia, associado.DiaVencimento);
+    }
+
+    private static bool MesReferenciaValido(string mesReferencia) =>
+        Regex.IsMatch(mesReferencia, @"^\d{4}-(0[1-9]|1[0-2])$");
+
+    private static DateOnly CalcularDataVencimento(string mesReferencia, int diaVencimento)
+    {
+        var ano = int.Parse(mesReferencia.AsSpan(0, 4));
+        var mes = int.Parse(mesReferencia.AsSpan(5, 2));
+        var dia = Math.Clamp(diaVencimento, 1, DateTime.DaysInMonth(ano, mes));
+        return new DateOnly(ano, mes, dia);
     }
 
     private async Task EnsureChargeRulesAsync(Cobranca entity)

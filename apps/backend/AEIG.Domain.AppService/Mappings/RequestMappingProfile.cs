@@ -25,6 +25,7 @@ public class RequestMappingProfile : Profile
             .ForMember(dest => dest.IdStatus, opt => opt.Condition(src => src.IdStatus > 0))
             .ForMember(dest => dest.Valor, opt => opt.Condition(src => src.Valor is > 0))
             .ForMember(dest => dest.ValorPago, opt => opt.Condition(src => src.ValorPago.HasValue))
-            .ForMember(dest => dest.DataVencimento, opt => opt.Condition(src => src.DataVencimento.HasValue));
+            .ForMember(dest => dest.DataVencimento, opt => opt.Condition(src => src.DataVencimento.HasValue))
+            .ForMember(dest => dest.DataPagamento, opt => opt.Condition(src => src.DataPagamento.HasValue));
     }
 }

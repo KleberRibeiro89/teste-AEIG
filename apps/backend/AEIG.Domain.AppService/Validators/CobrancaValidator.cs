@@ -15,3 +15,10 @@ public partial class CobrancaValidator : AbstractValidator<Cobranca>
         RuleFor(c => c.NossoNumero).NotEmpty().MaximumLength(20);
         RuleFor(c => c.Valor).GreaterThan(0).WithMessage("Informe o valor da cobrança.");
         RuleFor(c => c.ValorPago).GreaterThanOrEqualTo(0).WithMessage("O valor pago não pode ser negativo.");
+        RuleFor(c => c.DataVencimento).NotEmpty().WithMessage("Informe a data de vencimento.");
+        RuleFor(c => c.IdStatus).GreaterThan(0).WithMessage("Informe o status.");
+    }
+
+    [GeneratedRegex(@"^\d{4}-(0[1-9]|1[0-2])$")]
+    private static partial Regex ReferenceMonthPattern();
+}

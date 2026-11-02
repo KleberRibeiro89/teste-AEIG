@@ -81,6 +81,12 @@ namespace AEIG.Domain.Data.Migrations
                     b.Property<Guid>("CreatedBy")
                         .HasColumnType("TEXT");
 
+                    b.Property<DateOnly?>("DataPagamento")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateOnly>("DataVencimento")
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("IdAssociado")
                         .HasColumnType("INTEGER");
 
@@ -104,6 +110,14 @@ namespace AEIG.Domain.Data.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("Valor")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("ValorPago")
+                        .HasPrecision(10, 2)
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");

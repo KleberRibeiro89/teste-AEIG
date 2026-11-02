@@ -2,6 +2,7 @@ namespace AEIG.Domain.AppService.Dtos.Responses.AssociadoResponses;
 
 public class AssociadoResponse
 {
+    public int Id { get; set; }
     public Guid NavigationId { get; set; }
     public string Nome { get; set; } = string.Empty;
     public string Cpf { get; set; } = string.Empty;

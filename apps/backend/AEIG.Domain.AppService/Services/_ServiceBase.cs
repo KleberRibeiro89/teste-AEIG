@@ -50,7 +50,7 @@ public abstract class ServiceBase<TEntity, TRequest, TResponse> : IServiceBase<T
     public Task<TResponse?> UpdateAsync(Guid navigationId, TRequest request)
         => UpdateAsync(navigationId, existing => Mapper.Map(request, existing));
 
-    public async Task<TResponse> CreateAsync(TEntity entity, bool isActive = true)
+    public virtual async Task<TResponse> CreateAsync(TEntity entity, bool isActive = true)
     {
         SetCreatedBy(entity);
         await ValidateCreateAsync(entity);
