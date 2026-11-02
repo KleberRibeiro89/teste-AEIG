@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace AEIG.Api.Controllers;
 
 [ApiController]
-[AllowAnonymous]
+[Authorize]
 [Route("api/[controller]")]
 public class DashboardController : ControllerBase
 {

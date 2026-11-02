@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace AEIG.Api.Controllers;
 
 [ApiController]
-[AllowAnonymous]
+[Authorize]
 [Route("api/[controller]")]
 public class AuthController : ControllerBase
 {
@@ -20,6 +20,7 @@ public class AuthController : ControllerBase
         _userService = userService;
     }
 
+    [AllowAnonymous]
     [HttpPost("login")]
     public async Task<ActionResult<LoginResponse>> Login(LoginRequest request)
     {
